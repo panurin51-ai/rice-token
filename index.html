@@ -274,9 +274,9 @@
     </div>
 
     <!-- Обновленный JavaScript для работы и FAQ, и Модального окна -->
-        <script>
-        // --- 0. РЕАЛЬНЫЙ ТАЙМЕР ПРЕСЕЙЛА ---
-        const endDate = new Date(2027, 2, 6, 0, 0, 0).getTime();
+            <script>
+        // --- 1. РЕАЛЬНЫЙ ТАЙМЕР ПРЕСЕЙЛА ---
+        const endDate = new Date(2026, 10, 15, 18, 0, 0).getTime();
         const timerInterval = setInterval(function() {
             const now = new Date().getTime();
             const timeRemaining = endDate - now;
@@ -296,7 +296,7 @@
             }
         }, 1000);
 
-        // --- 1. ЛОГИКА FAQ (АККОРДЕОН) ---
+        // --- 2. ЛОГИКА FAQ (АККОРДЕОН) ---
         const faqQuestions = document.querySelectorAll('.faq-question');
         faqQuestions.forEach(question => {
             question.addEventListener('click', () => {
@@ -317,7 +317,7 @@
             });
         });
 
-        // --- 2. ЛОГИКА ВСПЛЫВАЮЩЕГО ОКНА (MODAL) ---
+        // --- 3. ЛОГИКА ВСПЛЫВАЮЩЕГО ОКНА ПРЕСЕЙЛА ---
         const modal = document.getElementById('presaleModal');
         const closeBtn = document.querySelector('.modal-close');
         const actionButtons = document.querySelectorAll('.btn-action, .btn-buy, .btn-main');
@@ -328,68 +328,59 @@
                 modal.classList.add('visible');
             });
         });
-        closeBtn.addEventListener('click', () => { modal.classList.remove('visible'); });
+        if(closeBtn) { closeBtn.addEventListener('click', () => { modal.classList.remove('visible'); }); }
         window.addEventListener('click', (e) => { if (e.target === modal) { modal.classList.remove('visible'); } });
 
-        function copyAddress() {
-            const addressText = document.getElementById('walletAddress').innerText;
-            navigator.clipboard.writeText(addressText).then(() => {
-                const copyBtn = document.querySelector('.btn-copy-address');
-                copyBtn.innerText = 'Скопировано!';
-                copyBtn.style.background = '#ffffff';
-                copyBtn.style.color = '#12100e';
-                setTimeout(() => {
-                    copyBtn.innerText = 'Копировать';
-                    copyBtn.style.background = '#241e1a';
-                    copyBtn.style.color = '#f4c430';
-                }, 2000);
-            });
-        }
-
-        // --- 3. ПРОДВИНУТАЯ Web3 ИНТЕГРАЦИЯ (С АВТО-ВЫЗОВОМ НА ТЕЛЕФОНАХ) ---
+        // --- 4. СТАБИЛЬНЫЙ КРИПТО-КОННЕКТ С АВТО-ВХОДОМ ---
         const connectBtn = document.querySelector('.btn-connect');
-        
-        // Настройки провайдеров кошельков
-        const providerOptions = {
-            walletconnect: {
-                package: window.WalletConnectProvider.default,
-                options: {
-                    // Используем публичный RPC-узел (для тестов и работы)
-                    rpc: { 1: "https://cloudflare-eth.com" } 
-                }
+
+        // Функция автоматической проверки при загрузке страницы
+        function checkWalletSession() {
+            const savedWallet = localStorage.getItem('userWalletAddress');
+            if (savedWallet && savedWallet !== "undefined" && savedWallet !== "null") {
+                // Если адрес сохранен, переделываем кнопку под него
+                const shortAddress = savedWallet.substring(0, 6) + '...' + savedWallet.substring(savedWallet.length - 4);
+                connectBtn.innerText = shortAddress;
+                connectBtn.style.background = "#241e1a";
+                connectBtn.style.color = "#f4c430";
+                connectBtn.style.border = "1px solid #2d241e";
             }
-        };
+        }
+        
+        // Запускаем проверку сразу
+        window.addEventListener('DOMContentLoaded', checkWalletSession);
 
-        // Инициализируем Web3Modal
-        const web3Modal = new window.Web3Modal.default({
-            cacheProvider: false, 
-            providerOptions,
-            theme: "dark" // Фирменная темная тема под наш дизайн
-        });
-
+        // Логика нажатия на кнопку
         connectBtn.addEventListener('click', async (e) => {
             e.preventDefault();
             
-            try {
-                // При клике открывается красивое универсальное окно выбора кошельков
-                // На смартфонах оно автоматически предложит открыть MetaMask/Trust App напрямую!
-                const provider = await web3Modal.connect();
-                
-                // Если пользователь на ПК и у него есть расширение, скрипт подхватит его
-                const accounts = await window.ethereum ? await window.ethereum.request({ method: 'eth_requestAccounts' }) : [provider.selectedAddress];
-                const userWallet = accounts[0];
-                
-                if (userWallet) {
-                    localStorage.setItem('userWalletAddress', userWallet);
-                    // Перенаправляем в личный кабинет
-                    window.location.href = 'dashboard.html';
+            const savedWallet = localStorage.getItem('userWalletAddress');
+            
+            // Если кошелек УЖЕ БЫЛ привязан — мгновенно пускаем в кабинет
+            if (savedWallet && savedWallet !== "undefined" && savedWallet !== "null") {
+                window.location.href = 'dashboard.html';
+                return;
+            }
+            
+            // Если зашли в первый раз — запрашиваем MetaMask/TrustWallet напрямую
+            if (typeof window.ethereum !== 'undefined') {
+                try {
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    const userWallet = accounts[0]; // Берем адрес кошелька
+                    
+                    if (userWallet) {
+                        localStorage.setItem('userWalletAddress', userWallet);
+                        window.location.href = 'dashboard.html';
+                    }
+                } catch (error) {
+                    alert('Подключение отклонено пользователем.');
                 }
-            } catch (error) {
-                console.log("Пользователь закрыл окно или произошла ошибка:", error);
+            } else {
+                // На мобилках: если зашли через обычный браузер, даем инфо-инструкцию
+                alert('Криптокошелек не найден! Пожалуйста, откройте этот сайт через dApp-браузер внутри приложения MetaMask или Trust Wallet.');
             }
         });
     </script>
-
 
     <!-- Скрипт для работы аккордеона FAQ (вставляем перед самым закрывающим тегом body) -->
     <script>
