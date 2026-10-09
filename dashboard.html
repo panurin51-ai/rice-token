@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rice Token - User Dashboard</title>
+    <link href="https://googleapis.com" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dashboard-body">
+
+    <!-- Шапка кабинета -->
+    <header class="site-header">
+        <div class="header-container">
+            <div class="logo" style="cursor:pointer;" onclick="window.location.href='index.html'">🌾 \$RICE</div>
+            <div class="header-right">
+                <!-- Сюда будет выводиться сокращенный адрес кошелька -->
+                <div id="walletDisplay" class="wallet-badge">0x000...0000</div>
+                <button class="btn-logout" onclick="logout()">Disconnect</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Основной контент кабинета -->
+    <main class="dashboard-container">
+        <h1>Welcome to your Rice Dashboard</h1>
+        <p class="subtitle">Управляйте вашими активами, пополняйте баланс и выводите токены экосистемы</p>
+
+        <!-- Сетка с балансами активов -->
+        <div class="grid dashboard-grid">
+            <!-- Карточка 1: Токены Rice -->
+            <div class="card asset-card">
+                <span class="asset-icon">🌾</span>
+                <h3>0.00 \$RICE</h3>
+                <p>Ваш баланс токенов</p>
+                <div class="card-actions">
+                    <button class="btn-action yellow" onclick="alert('Функция Claim будет доступна после окончания пресейла!')">Claim Tokens</button>
+                </div>
+            </div>
+
+            <!-- Карточка 2: Баланс Криптовалюты для ввода/вывода -->
+            <div class="card asset-card">
+                <span class="asset-icon">💎</span>
+                <h3>0.0000 ETH / SOL</h3>
+                <p>Баланс кошелька</p>
+                <div class="card-actions-row">
+                    <button class="btn-action white" onclick="openAction('Deposit')">Deposit</button>
+                    <button class="btn-action trans" onclick="openAction('Withdraw')">Withdraw</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Скрытый блок для Ввода/Вывода средств -->
+        <div id="actionBox" class="action-box" style="display: none;">
+            <h2 id="actionTitle">Deposit Funds</h2>
+            <div class="input-group">
+                <label for="amountInput">Введите сумму:</label>
+                <input type="number" id="amountInput" placeholder="0.00" min="0">
+            </div>
+            <button class="btn-action yellow" id="confirmActionBtn" onclick="processTransaction()">Подтвердить операцию</button>
+        </div>
+    </main>
+
+    <script>
+        // Проверяем, подключен ли кошелек. Если нет — выкидываем на главную
+        const wallet = localStorage.getItem('userWalletAddress');
+        if (!wallet) {
+            window.location.href = 'index.html';
+        } else {
+            // Показываем сокращенный адрес (например: 0x1234...abcd)
+            const shortWallet = wallet.substring(0, 6) + '...' + wallet.substring(wallet.length - 4);
+            document.getElementById('walletDisplay').innerText = shortWallet;
+        }
+
+        // Выход (отключение кошелька)
+        function logout() {
+            localStorage.removeItem('userWalletAddress');
+            window.location.href = 'index.html';
+        }
+
+        // Открытие блока ввода/вывода
+        function openAction(type) {
+            const box = document.getElementById('actionBox');
+            const title = document.getElementById('actionTitle');
+            box.style.display = 'block';
+            box.scrollIntoView({ behavior: 'smooth' });
+            
+            if (type === 'Deposit') {
+                title.innerText = 'Deposit Funds (Пополнение)';
+            } else {
+                title.innerText = 'Withdraw Assets (Вывод средств)';
+            }
+        }
+
+        // Имитация транзакции
+        function processTransaction() {
+            const amount = document.getElementById('amountInput').value;
+            if (!amount || amount <= 0) {
+                alert('Пожалуйста, введите корректную сумму!');
+                return;
+            }
+            
+            // Здесь отправляется запрос в настоящий смарт-контракт. Пока мы просто симулируем это:
+            alert(`Транзакция отправлена в блокчейн! Сумма: ${amount}. Ожидайте подтверждения сети.`);
+            document.getElementById('amountInput').value = '';
+            document.getElementById('actionBox').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
