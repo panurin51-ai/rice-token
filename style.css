@@ -973,3 +973,196 @@ footer {
         padding: 30px 15px;
     }
 }
+/* ==========================================================================
+   УЛЬТРА-ФИКС ДИЗАЙНА ДАШБОРДА (БОРЕМСЯ С КРИВОЙ ВЕРСТКОЙ)
+   ========================================================================== */
+
+/* Настройка главного контейнера приложения */
+.dapp-layout {
+    display: flex;
+    min-height: calc(100vh - 90px);
+    max-width: 1400px;
+    margin: 0 auto;
+    background: rgba(18, 16, 14, 0.4);
+}
+
+/* Стили Боковой Панели */
+.sidebar {
+    width: 280px;
+    background-color: #1a1613 !important; /* Жестко задаем темный шоколадный фон */
+    border-right: 1px solid #2d241e !important;
+    padding: 40px 20px !important;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-sizing: border-box;
+}
+
+.sidebar-btn {
+    width: 100%;
+    background: #12100e !important; /* Делаем кнопки темными плашками */
+    border: 1px solid #2d241e !important;
+    color: #a0aec0 !important;
+    padding: 16px 20px !important;
+    border-radius: 14px !important;
+    font-family: 'Poppins', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: all 0.3s ease !important;
+}
+
+.sidebar-btn:hover {
+    border-color: #f4c430 !important;
+    color: #ffffff !important;
+    transform: translateX(3px);
+}
+
+.sidebar-btn.active {
+    background: linear-gradient(90deg, rgba(244, 196, 48, 0.15) 0%, rgba(244, 196, 48, 0.02) 100%) !important;
+    color: #f4c430 !important;
+    border: 1px solid #f4c430 !important;
+    box-shadow: 0 4px 20px rgba(244, 196, 48, 0.05);
+}
+
+/* Правая контентная часть */
+.dapp-content {
+    flex: 1;
+    padding: 50px 60px !important;
+    box-sizing: border-box;
+}
+
+/* Сетка для карточек Дашборда (Выстраиваем в ряд!) */
+.dashboard-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)) !important; /* Разрешаем карточкам быть широкими */
+    gap: 30px !important;
+    margin-top: 35px !important;
+    max-width: 100% !important;
+}
+
+/* Новые шикарные Стеклянные Карточки */
+.db-card {
+    background: #1a1613 !important; /* Насыщенный фон */
+    border: 1px solid #2d241e !important; /* Четкая рамка */
+    border-radius: 24px !important;
+    padding: 35px !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    min-height: 280px !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3) !important;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+}
+
+.db-card:hover {
+    transform: translateY(-8px) !important;
+    border-color: #f4c430 !important;
+    box-shadow: 0 15px 40px rgba(244, 196, 48, 0.15) !important;
+}
+
+/* Верстка внутренних элементов карточки */
+.db-card-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    margin-bottom: 20px !important;
+    width: 100%;
+}
+
+.db-card-icon {
+    font-size: 36px !important;
+}
+
+.db-card-tag {
+    font-size: 11px !important;
+    background: #241e1a !important;
+    border: 1px solid #2d241e;
+    padding: 6px 14px !important;
+    border-radius: 30px !important;
+    color: #a0aec0 !important;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.db-balance-value {
+    font-size: 38px !important;
+    font-weight: 800 !important;
+    color: #ffffff !important;
+    margin: 15px 0 10px 0 !important;
+    text-shadow: 0 0 15px rgba(244, 196, 48, 0.1);
+}
+
+.db-balance-value .ticker-small {
+    font-size: 20px !important;
+    color: #f4c430 !important;
+}
+
+.db-card-desc {
+    font-size: 14px !important;
+    color: #718096 !important;
+    margin: 0 0 25px 0 !important;
+    line-height: 1.6 !important;
+}
+
+/* Кнопки внутри карточек */
+.btn-db-action {
+    width: 100% !important;
+    padding: 16px !important;
+    border-radius: 16px !important;
+    font-weight: 700 !important;
+    font-size: 15px !important;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+}
+
+.db-btn-group {
+    display: flex !important;
+    gap: 15px !important;
+    width: 100% !important;
+}
+
+/* Кастомизация строк рынка */
+.stats-rows {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 18px !important;
+    justify-content: center !important;
+    height: 100% !important;
+    margin-top: 10px;
+}
+
+.stats-row {
+    display: flex !important;
+    justify-content: space-between !important;
+    font-size: 16px !important;
+    border-bottom: 1px dashed #2d241e !important;
+    padding-bottom: 12px !important;
+}
+
+/* Мобильная адаптация для узких экранов */
+@media (max-width: 992px) {
+    .dapp-layout {
+        flex-direction: column !important;
+    }
+    .sidebar {
+        width: 100% !important;
+        border-right: none !important;
+        border-bottom: 1px solid #2d241e !important;
+        padding: 15px !important;
+        flex-direction: row !important;
+        overflow-x: auto !important;
+    }
+    .sidebar-btn {
+        white-space: nowrap !important;
+        padding: 12px 18px !important;
+    }
+    .dapp-content {
+        padding: 30px 20px !important;
+    }
+}
