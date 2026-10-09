@@ -866,3 +866,110 @@ footer {
     filter: drop-shadow(0 10px 20px rgba(244, 196, 48, 0.4));
     animation: floatingMascot 3s ease-in-out infinite;
 }
+/* --- СЕТКА WEB3 ПРИЛОЖЕНИЯ (DAPP LAYOUT) --- */
+.dapp-layout {
+    display: flex;
+    min-height: calc(100vh - 82px); /* Высота экрана минус высота шапки */
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Стили Бокового Меню (Sidebar) */
+.sidebar {
+    width: 260px;
+    background-color: rgba(26, 22, 19, 0.6);
+    backdrop-filter: blur(10px);
+    border-right: 1px solid rgba(244, 196, 48, 0.08);
+    padding: 30px 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-sizing: border-box;
+}
+
+.sidebar-btn {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: #a0aec0;
+    padding: 14px 20px;
+    border-radius: 12px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.2s ease;
+}
+
+.sidebar-btn:hover {
+    background: rgba(255, 255, 255, 0.03);
+    color: #ffffff;
+}
+
+/* Активное состояние кнопки в боковом меню */
+.sidebar-btn.active {
+    background-color: rgba(244, 196, 48, 0.1);
+    color: #f4c430;
+    border-left: 3px solid #f4c430;
+    border-radius: 4px 12px 12px 4px;
+}
+
+.sidebar-icon {
+    font-size: 18px;
+}
+
+/* Область отображения контента справа */
+.dapp-content {
+    flex: 1;
+    padding: 40px 40px 80px 40px;
+    box-sizing: border-box;
+}
+
+/* Логика вкладок (Скрытие/Показ) */
+.tab-content {
+    display: none; /* По умолчанию все вкладки скрыты */
+}
+
+.tab-content.active {
+    display: block; /* Показывается только активная */
+    animation: fadeInTab 0.4s ease;
+}
+
+/* Плавное проявление контента при переключении */
+@keyframes fadeInTab {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Адаптивность для мобильных телефонов (Смена на вертикальный режим) */
+@media (max-width: 992px) {
+    .dapp-layout {
+        flex-direction: column;
+    }
+    .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid rgba(244, 196, 48, 0.08);
+        padding: 15px;
+        flex-direction: row;
+        overflow-x: auto; /* Позволяет листать меню вбок на мобилке */
+        gap: 5px;
+    }
+    .sidebar-btn {
+        padding: 10px 15px;
+        white-space: nowrap;
+        font-size: 13px;
+    }
+    .sidebar-btn.active {
+        border-left: none;
+        border-bottom: 3px solid #f4c430;
+        border-radius: 4px;
+    }
+    .dapp-content {
+        padding: 30px 15px;
+    }
+}
