@@ -3,105 +3,180 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rice Token - User Dashboard</title>
+    <title>Rice Token - Web3 Portal</title>
     <link href="https://googleapis.com" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="dashboard-body">
 
-    <!-- Шапка кабинета -->
+    <!-- Верхняя шапка кабинета -->
     <header class="site-header">
         <div class="header-container">
-            <div class="logo" style="cursor:pointer;" onclick="window.location.href='index.html'">🌾 \$RICE</div>
+            <div class="logo" onclick="window.location.href='index.html'">🌾 \$RICE PORTAL</div>
             <div class="header-right">
-                <!-- Сюда будет выводиться сокращенный адрес кошелька -->
+                <div class="network-badge"><span class="network-dot"></span> Mainnet</div>
                 <div id="walletDisplay" class="wallet-badge">0x000...0000</div>
                 <button class="btn-logout" onclick="logout()">Disconnect</button>
             </div>
         </div>
     </header>
 
-    <!-- Основной контент кабинета -->
-    <main class="dashboard-container">
-        <h1>Welcome to your Rice Dashboard</h1>
-        <p class="subtitle">Управляйте вашими активами, пополняйте баланс и выводите токены экосистемы</p>
+    <!-- Основной интерфейс: Меню + Контент -->
+    <div class="dapp-layout">
+        
+        <!-- БОКОВОЕ МЕНЮ (SIDEBAR) -->
+        <aside class="sidebar">
+            <button class="sidebar-btn active" onclick="switchTab('main-tab', this)">
+                <span class="sidebar-icon">🏠</span> Dashboard
+            </button>
+            <button class="sidebar-btn" onclick="switchTab('wallet-tab', this)">
+                <span class="sidebar-icon">💼</span> Wallet & Assets
+            </button>
+            <button class="sidebar-btn" onclick="switchTab('staking-tab', this)">
+                <span class="sidebar-icon">🥩</span> Staking (Earn)
+            </button>
+            <button class="sidebar-btn" onclick="switchTab('settings-tab', this)">
+                <span class="sidebar-icon">⚙️</span> Settings
+            </button>
+        </aside>
 
-        <!-- Сетка с балансами активов -->
-        <div class="grid dashboard-grid">
-            <!-- Карточка 1: Токены Rice -->
-            <div class="card asset-card">
-                <span class="asset-icon">🌾</span>
-                <h3>0.00 \$RICE</h3>
-                <p>Ваш баланс токенов</p>
-                <div class="card-actions">
-                    <button class="btn-action yellow" onclick="alert('Функция Claim будет доступна после окончания пресейла!')">Claim Tokens</button>
+        <!-- ПАНЕЛЬ КОНТЕНТА (МЕНЯЕТСЯ ДИНАМИЧЕСКИ) -->
+        <main class="dapp-content">
+            
+            <!-- ВКЛАДКА 1: ГЛАВНАЯ (DASHBOARD) -->
+            <div id="main-tab" class="tab-content active">
+                <div class="dashboard-welcome">
+                    <h1>Welcome back, Investor!</h1>
+                    <p class="subtitle">Общая статистика вашего профиля Rice Экосистемы</p>
+                </div>
+                
+                <div class="dashboard-grid">
+                    <div class="db-card">
+                        <div class="db-card-header"><span class="db-card-icon">🌾</span><span class="db-card-tag">Баланс</span></div>
+                        <div class="db-balance-value">0.00 <span class="ticker-small">\$RICE</span></div>
+                        <p class="db-card-desc">Токены, купленные на этапе Pre-Sale</p>
+                        <button class="btn-db-action yellow" onclick="alert('Клейм токенов откроется после завершения пресейла!')">Claim Tokens</button>
+                    </div>
+                    <div class="db-card">
+                        <div class="db-card-header"><span class="db-card-icon">📈</span><span class="db-card-tag">Рынок</span></div>
+                        <div class="stats-rows">
+                            <div class="stats-row"><span>Пресейл цена:</span> <strong>\$0.00231</strong></div>
+                            <div class="stats-row"><span>Листинг цена:</span> <strong style="color: #f4c430;">\$0.02000</strong></div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Карточка 2: Баланс Криптовалюты для ввода/вывода -->
-            <div class="card asset-card">
-                <span class="asset-icon">💎</span>
-                <h3>0.0000 ETH / SOL</h3>
-                <p>Баланс кошелька</p>
-                <div class="card-actions-row">
-                    <button class="btn-action white" onclick="openAction('Deposit')">Deposit</button>
-                    <button class="btn-action trans" onclick="openAction('Withdraw')">Withdraw</button>
+            <!-- ВКЛАДКА 2: КОШЕЛЕК И ФИНАНСЫ (WALLET & ASSETS) -->
+            <div id="wallet-tab" class="tab-content">
+                <h2>Wallet & Financial Operations</h2>
+                <p class="subtitle">Управление вводом и выводом криптовалюты</p>
+                
+                <div class="dashboard-grid" style="grid-template-columns: 1fr 1fr;">
+                    <div class="db-card" style="min-height: auto;">
+                        <div class="db-card-header"><span class="db-card-icon">💎</span><span class="db-card-tag">Баланс ETH/SOL</span></div>
+                        <div class="db-balance-value">0.0000 <span class="ticker-small">CRYPTO</span></div>
+                        <div class="db-btn-group" style="margin-top: 20px;">
+                            <button class="btn-db-action white" onclick="openAction('Deposit')">Deposit (Ввод)</button>
+                            <button class="btn-db-action trans" onclick="openAction('Withdraw')">Withdraw (Вывод)</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Блок инпута для Ввода/Вывода средств -->
+                <div id="actionBox" class="db-action-box" style="display: none; margin: 30px 0 0 0;">
+                    <div class="action-box-header">
+                        <h2 id="actionTitle">Deposit Assets</h2>
+                    </div>
+                    <div class="input-container-db">
+                        <input type="number" id="amountInput" placeholder="0.00" min="0">
+                        <span class="input-currency">AMOUNT</span>
+                    </div>
+                    <button class="btn-db-action yellow" onclick="processTransaction()">Confirm Transaction</button>
                 </div>
             </div>
-        </div>
 
-        <!-- Скрытый блок для Ввода/Вывода средств -->
-        <div id="actionBox" class="action-box" style="display: none;">
-            <h2 id="actionTitle">Deposit Funds</h2>
-            <div class="input-group">
-                <label for="amountInput">Введите сумму:</label>
-                <input type="number" id="amountInput" placeholder="0.00" min="0">
+            <!-- ВКЛАДКА 3: СТЕЙКИНГ (STAKING) -->
+            <div id="staking-tab" class="tab-content">
+                <h2>\$RICE Staking Pool</h2>
+                <p class="subtitle">Заблокируйте свои токены Rice под высокий процент и получайте пассивный доход</p>
+                
+                <div class="dashboard-grid">
+                    <div class="db-card">
+                        <div class="db-card-header"><span class="db-card-icon">🔥</span><span class="db-card-tag">Доходность</span></div>
+                        <div class="db-balance-value" style="color: #00ffcc;">142.5% <span class="ticker-small">APY</span></div>
+                        <p class="db-card-desc">Фиксированная годовая ставка для ранних инвесторов</p>
+                        <button class="btn-db-action yellow" onclick="alert('Стейкинг запустится одновременно с листингом токена на DEX!')">Start Staking</button>
+                    </div>
+                </div>
             </div>
-            <button class="btn-action yellow" id="confirmActionBtn" onclick="processTransaction()">Подтвердить операцию</button>
-        </div>
-    </main>
+
+            <!-- ВКЛАДКА 4: НАСТРОЙКИ (SETTINGS) -->
+            <div id="settings-tab" class="tab-content">
+                <h2>Account Settings</h2>
+                <p class="subtitle">Управление уведомлениями и привязкой безопасности профиля</p>
+                <div class="db-card" style="max-width: 500px; min-height: auto;">
+                    <p style="color: #a0aec0; margin: 0 0 15px 0;">Ваш профиль полностью защищен технологией приватных ключей блокчейна.</p>
+                    <div class="stats-row"><span>Статус верификации:</span> <strong style="color: #00ffcc;">Web3 Verified</strong></div>
+                </div>
+            </div>
+
+        </main>
+    </div>
 
     <script>
-        // Проверяем, подключен ли кошелек. Если нет — выкидываем на главную
+        // Проверка авторизации
         const wallet = localStorage.getItem('userWalletAddress');
-        if (!wallet) {
+        if (!wallet || wallet === "undefined") {
             window.location.href = 'index.html';
         } else {
-            // Показываем сокращенный адрес (например: 0x1234...abcd)
             const shortWallet = wallet.substring(0, 6) + '...' + wallet.substring(wallet.length - 4);
             document.getElementById('walletDisplay').innerText = shortWallet;
         }
 
-        // Выход (отключение кошелька)
         function logout() {
             localStorage.removeItem('userWalletAddress');
             window.location.href = 'index.html';
         }
 
-        // Открытие блока ввода/вывода
+        // --- УМНОЕ ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК БЕЗ ПЕРЕЗАГРУЗКИ ---
+        function switchTab(tabId, buttonElement) {
+            // Скрываем весь контент вкладок
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            // Убираем активный класс у всех кнопок меню
+            document.querySelectorAll('.sidebar-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Показываем нужную вкладку и активируем кнопку
+            document.getElementById(tabId).classList.add('active');
+            buttonElement.classList.add('active');
+
+            // Скрываем окно депозита/вывода при смене вкладки, чтобы не мешалось
+            document.getElementById('actionBox').style.display = 'none';
+        }
+
         function openAction(type) {
             const box = document.getElementById('actionBox');
             const title = document.getElementById('actionTitle');
             box.style.display = 'block';
-            box.scrollIntoView({ behavior: 'smooth' });
             
             if (type === 'Deposit') {
-                title.innerText = 'Deposit Funds (Пополнение)';
+                title.innerText = 'Deposit Assets';
             } else {
-                title.innerText = 'Withdraw Assets (Вывод средств)';
+                title.innerText = 'Withdraw Assets';
             }
         }
 
-        // Имитация транзакции
         function processTransaction() {
             const amount = document.getElementById('amountInput').value;
             if (!amount || amount <= 0) {
                 alert('Пожалуйста, введите корректную сумму!');
                 return;
             }
-            
-            // Здесь отправляется запрос в настоящий смарт-контракт. Пока мы просто симулируем это:
-            alert(`Транзакция отправлена в блокчейн! Сумма: ${amount}. Ожидайте подтверждения сети.`);
+            alert(`Запрос отправлен в блокчейн! Сумма: ${amount}. Ожидайте подтверждения сети.`);
             document.getElementById('amountInput').value = '';
             document.getElementById('actionBox').style.display = 'none';
         }
