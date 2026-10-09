@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+    <!-- Подключаем библиотеку WalletConnect для авто-вызова мобильных кошельков -->
+    <script src="https://unpkg.com"></script>
+    <script src="https://unpkg.com"></script>
+    <script src="https://unpkg.com"></script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rice Token - $RICE Pre-Sale</title>
@@ -347,31 +352,46 @@
             });
         }
 
-        // --- 3. ИНТЕГРАЦИЯ КРИПТОКОШЕЛЬКА ---
+        // --- 3. ПРОДВИНУТАЯ Web3 ИНТЕГРАЦИЯ (С АВТО-ВЫЗОВОМ НА ТЕЛЕФОНАХ) ---
         const connectBtn = document.querySelector('.btn-connect');
+        
+        // Настройки провайдеров кошельков
+        const providerOptions = {
+            walletconnect: {
+                package: window.WalletConnectProvider.default,
+                options: {
+                    // Используем публичный RPC-узел (для тестов и работы)
+                    rpc: { 1: "https://cloudflare-eth.com" } 
+                }
+            }
+        };
+
+        // Инициализируем Web3Modal
+        const web3Modal = new window.Web3Modal.default({
+            cacheProvider: false, 
+            providerOptions,
+            theme: "dark" // Фирменная темная тема под наш дизайн
+        });
 
         connectBtn.addEventListener('click', async (e) => {
             e.preventDefault();
             
-            // Проверяем, установлен ли MetaMask или другой криптокошелек
-            if (typeof window.ethereum !== 'undefined') {
-                try {
-                    // Запрашиваем доступ к аккаунту пользователя
-                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                    const userWallet = accounts[0];
-                    
-                    // Сохраняем адрес кошелька в память браузера, чтобы кабинет его «видел»
+            try {
+                // При клике открывается красивое универсальное окно выбора кошельков
+                // На смартфонах оно автоматически предложит открыть MetaMask/Trust App напрямую!
+                const provider = await web3Modal.connect();
+                
+                // Если пользователь на ПК и у него есть расширение, скрипт подхватит его
+                const accounts = await window.ethereum ? await window.ethereum.request({ method: 'eth_requestAccounts' }) : [provider.selectedAddress];
+                const userWallet = accounts[0];
+                
+                if (userWallet) {
                     localStorage.setItem('userWalletAddress', userWallet);
-                    
-                    // Перенаправляем пользователя на страницу личного кабинета
+                    // Перенаправляем в личный кабинет
                     window.location.href = 'dashboard.html';
-                } catch (error) {
-                    alert('Ошибка подключения: ' + error.message);
                 }
-            } else {
-                // Если кошелька нет, перенаправляем на сайт MetaMask
-                alert('Криптокошелек не обнаружен. Пожалуйста, установите MetaMask или Trust Wallet.');
-                window.open('https://metamask.io', '_blank');
+            } catch (error) {
+                console.log("Пользователь закрыл окно или произошла ошибка:", error);
             }
         });
     </script>
